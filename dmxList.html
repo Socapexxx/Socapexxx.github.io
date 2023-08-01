@@ -115,11 +115,12 @@
         <h1>DMX Patch List Generator</h1>
         <form id="patchForm">
             <label for="fixture">Select Fixture:</label>
-            <select id="fixture" style="width: 100%;">
-                <option value="genericRGBW" data-channels="4">Generic RGBW</option>
-                <option value="mythosVector" data-channels="34">Mythos Vector</option>
+            <input type="text" id="fixture" list="fixtureList" style="width: 100%;">
+            <datalist id="fixtureList">
+                <option value="Generic RGBW" data-channels="4"></option>
+                <option value="Mythos Vector" data-channels="34"></option>
                 <!-- Add more fixture options here -->
-            </select>
+            </datalist>
 
             <label for="numFixtures">Number of Fixtures:</label>
             <input type="number" id="numFixtures" min="1" value="1">
@@ -147,7 +148,6 @@
         <button type="button" onclick="toggleDarkMode()">Toggle Dark Mode</button>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <script>
         // Function to retrieve data attributes
         function getOptionData(selectElement, key) {
@@ -176,18 +176,17 @@
         }
 
         function addToPatchList() {
-            const fixtureSelect = document.getElementById("fixture");
-            const fixture = fixtureSelect.value;
+            const fixtureInput = document.getElementById("fixture");
+            const fixture = fixtureInput.value;
             const numFixtures = parseInt(document.getElementById("numFixtures").value);
             const startingAddress = parseInt(document.getElementById("startingAddress").value);
-            const numChannels = parseInt(getOptionData(fixtureSelect, "channels"));
-            const displayName = fixtureSelect.options[fixtureSelect.selectedIndex].textContent;
+            const numChannels = parseInt(getOptionData(fixtureInput, "channels"));
 
             let patchList = document.getElementById("outputTable");
             for (let i = 0; i < numFixtures; i++) {
                 const address = startingAddress + (i * numChannels);
                 let newRow = patchList.insertRow();
-                newRow.innerHTML = `<td>${displayName} ${i + 1}</td><td>${address}</td>`;
+                newRow.innerHTML = `<td>${fixture} ${i + 1}</td><td>${address}</td>`;
             }
 
             updateNextAvailableAddress();
@@ -210,22 +209,6 @@
 
         // Initial call to update the "Next Available Address" on page load
         updateNextAvailableAddress();
-
-        // Initialize Select2 on the fixture dropdown
-        document.addEventListener("DOMContentLoaded", function() {
-            const selectElement = document.getElementById("fixture");
-            const fixtureData = [
-                { id: "genericRGBW", text: "Generic RGBW", channels: 4 },
-                { id: "mythosVector", text: "Mythos Vector", channels: 34 },
-                // Add more fixture options here
-            ];
-            const options = {
-                data: fixtureData,
-                width: "100%",
-                placeholder: "Select Fixture",
-            };
-            $(selectElement).select2(options);
-        });
     </script>
 </body>
 </html>
