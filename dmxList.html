@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>DMX Patch List Generator</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -114,7 +115,7 @@
         <h1>DMX Patch List Generator</h1>
         <form id="patchForm">
             <label for="fixture">Select Fixture:</label>
-            <select id="fixture">
+            <select id="fixture" style="width: 100%;">
                 <option value="genericRGBW" data-channels="4">Generic RGBW</option>
                 <option value="mythosVector" data-channels="34">Mythos Vector</option>
                 <!-- Add more fixture options here -->
@@ -146,6 +147,7 @@
         <button type="button" onclick="toggleDarkMode()">Toggle Dark Mode</button>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
     <script>
         // Function to retrieve data attributes
         function getOptionData(selectElement, key) {
@@ -208,6 +210,22 @@
 
         // Initial call to update the "Next Available Address" on page load
         updateNextAvailableAddress();
+
+        // Initialize Select2 on the fixture dropdown
+        document.addEventListener("DOMContentLoaded", function() {
+            const selectElement = document.getElementById("fixture");
+            const fixtureData = [
+                { id: "genericRGBW", text: "Generic RGBW", channels: 4 },
+                { id: "mythosVector", text: "Mythos Vector", channels: 34 },
+                // Add more fixture options here
+            ];
+            const options = {
+                data: fixtureData,
+                width: "100%",
+                placeholder: "Select Fixture",
+            };
+            $(selectElement).select2(options);
+        });
     </script>
 </body>
 </html>
