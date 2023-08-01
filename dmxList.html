@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DMX Patch List Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        h1 {
+            margin-top: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        select, input[type="number"] {
+            margin-bottom: 10px;
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: #fff;
+            color: #333;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px; /* Add some spacing between buttons */
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .dark-mode {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .dark-mode input[type="number"],
+        .dark-mode select {
+            background-color: #444;
+            color: #fff;
+            border-color: #444;
+        }
+
+        .dark-mode button {
+            background-color: #212529;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            select, input[type="number"] {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="container">
+        <h1>DMX Patch List Generator</h1>
+        <form id="patchForm">
+            <label for="fixture">Select Fixture:</label>
+            <select id="fixture">
+                <option value="genericRGBW" data-channels="4">Generic RGBW</option>
+                <option value="mythosVector" data-channels="34">Mythos Vector</option>
+                <!-- Add more fixture options here -->
+            </select>
+
+            <label for="numFixtures">Number of Fixtures:</label>
+            <input type="number" id="numFixtures" min="1" value="1">
+
+            <!-- Display the next available address -->
+            <span id="nextAvailableAddress">Next Available Address: 1</span>
+
+            <label for="startingAddress">Starting Address:</label>
+            <input type="number" id="startingAddress" min="1" value="1">
+
+            <button type="button" onclick="setStartingAddressToNext()">Set to Next Available Address</button>
+
+            <button type="button" onclick="addToPatchList()">Add to Patch List</button>
+        </form>
+
+        <h2>Generated Patch List</h2>
+        <button type="button" onclick="clearPatchList()">Clear Patch List</button>
+        <table id="outputTable">
+            <tr>
+                <th>Fixture</th>
+                <th>Address</th>
+            </tr>
+        </table>
+
+        <button type="button" onclick="toggleDarkMode()">Toggle Dark Mode</button>
+    </div>
+
+    <script>
+        // Function to retrieve data attributes
+        function getOptionData(selectElement, key) {
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            return selectedOption.getAttribute(`data-${key}`);
+        }
+
+        // Function to update the "Next Available Address" text
+        function updateNextAvailableAddress() {
+            const fixtureSelect = document.getElementById("fixture");
+            const numFixtures = parseInt(document.getElementById("numFixtures").value);
+            const startingAddress = parseInt(document.getElementById("startingAddress").value);
+            const numChannels = parseInt(getOptionData(fixtureSelect, "channels"));
+            const nextAvailableAddress = startingAddress + numFixtures * numChannels;
+            document.getElementById("nextAvailableAddress").textContent = `Next Available Address: ${nextAvailableAddress}`;
+        }
+
+        // Function to set the Starting Address to the next available address
+        function setStartingAddressToNext() {
+            const fixtureSelect = document.getElementById("fixture");
+            const numFixtures = parseInt(document.getElementById("numFixtures").value);
+            const startingAddress = parseInt(document.getElementById("startingAddress").value);
+            const numChannels = parseInt(getOptionData(fixtureSelect, "channels"));
+            const nextAvailableAddress = startingAddress + numFixtures * numChannels;
+            document.getElementById("startingAddress").value = nextAvailableAddress;
+        }
+
+        function addToPatchList() {
+            const fixtureSelect = document.getElementById("fixture");
+            const fixture = fixtureSelect.value;
+            const numFixtures = parseInt(document.getElementById("numFixtures").value);
+            const startingAddress = parseInt(document.getElementById("startingAddress").value);
+            const numChannels = parseInt(getOptionData(fixtureSelect, "channels"));
+            const displayName = fixtureSelect.options[fixtureSelect.selectedIndex].textContent;
+
+            let patchList = document.getElementById("outputTable");
+            for (let i = 0; i < numFixtures; i++) {
+                const address = startingAddress + (i * numChannels);
+                let newRow = patchList.insertRow();
+                newRow.innerHTML = `<td>${displayName} ${i + 1}</td><td>${address}</td>`;
+            }
+
+            updateNextAvailableAddress();
+        }
+
+        function clearPatchList() {
+            document.getElementById("outputTable").innerHTML = `
+                <tr>
+                    <th>Fixture</th>
+                    <th>Address</th>
+                </tr>
+            `;
+            updateNextAvailableAddress();
+        }
+
+        function toggleDarkMode() {
+            const body = document.body;
+            body.classList.toggle("dark-mode");
+        }
+
+        // Initial call to update the "Next Available Address" on page load
+        updateNextAvailableAddress();
+    </script>
+</body>
+</html>
