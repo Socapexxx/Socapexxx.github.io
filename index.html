@@ -30,7 +30,7 @@
 
         .option {
             display: flex;
-            justify-content: center; /* Center-align buttons */
+            justify-content: space-between; /* Add space between button and download link */
             align-items: center;
             border-bottom: 1px solid #ddd;
             padding: 10px;
@@ -63,6 +63,13 @@
             background-color: #0056b3;
         }
 
+        .download-link {
+            color: #007BFF;
+            text-decoration: none;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
         @media only screen and (max-width: 600px) {
             /* Add mobile-specific styles here */
         }
@@ -76,9 +83,11 @@
     <div class="container">
         <div class="option">
             <a class="button" href="panelBashin.html">PANEL BASHIN</a>
+            <a class="download-link" href="panelBashin.html" download>Download</a>
         </div>
         <div class="option">
             <a class="button" href="dmxList.html">DMX Patch Mate</a>
+            <a class="download-link" href="dmxList.html" download>Download</a>
         </div>
         <!-- Add more options as needed -->
     </div>
