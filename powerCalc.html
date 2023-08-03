@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concert Lighting Power Calculators</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #333; /* Dark mode background color */
+            color: #f5f5f5; /* Dark mode text color */
+        }
+
+        body.light-mode {
+            background-color: #f5f5f5; /* Light mode background color */
+            color: #333; /* Light mode text color */
+        }
+
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button.clear {
+            background-color: #f44336;
+            margin-top: 5px;
+        }
+
+        p {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <h1>Concert Lighting Power Calculators</h1>
+
+    <h2>Ohm's Law Calculator</h2>
+    <label for="voltage">Voltage (V):</label>
+    <input type="number" id="voltage" value="240">
+    <label for="current">Current (A):</label>
+    <input type="number" id="current">
+    <label for="watts">Watts (W):</label>
+    <input type="number" id="watts">
+    <button onclick="calculateOhmsLaw()">Calculate</button>
+    <button class="clear" onclick="clearOhmsLaw()">Clear</button>
+    <p id="ohmsLawResult"></p>
+
+    <h2>Voltage Drop Calculator</h2>
+    <label for="current2">Current (A):</label>
+    <input type="number" id="current2">
+    <label for="length">Length of Cable (m):</label>
+    <input type="number" id="length">
+    <label for="cableSize">Cable Size (mm²):</label>
+    <select id="cableSize">
+        <option value="1.00">1.00 mm²</option>
+        <option value="1.50">1.50 mm²</option>
+        <option value="2.50">2.50 mm²</option>
+        <option value="4.00">4.00 mm²</option>
+        <option value="6.00">6.00 mm²</option>
+        <option value="10.00">10.00 mm²</option>
+        <option value="16.00">16.00 mm²</option>
+        <option value="25.00">25.00 mm²</option>
+        <option value="35.00">35.00 mm²</option>
+        <option value="50.00">50.00 mm²</option>
+        <option value="70.00">70.00 mm²</option>
+        <option value="95.00">95.00 mm²</option>
+        <option value="120.00">120.00 mm²</option>
+    </select>
+    <br>
+    <button onclick="calculateVoltageDrop()">Calculate</button>
+    <p id="voltageDropResult"></p>
+    <p id="voltageDropPercentageResult"></p>
+
+    <button onclick="toggleColorScheme()">Toggle Color Scheme</button>
+
+    <script>
+        function calculateOhmsLaw() {
+            const voltage = parseFloat(document.getElementById("voltage").value);
+            const current = parseFloat(document.getElementById("current").value);
+            const watts = parseFloat(document.getElementById("watts").value);
+
+            if (!isNaN(voltage) && !isNaN(current) && isNaN(watts)) {
+                // Calculate Watts from Voltage and Current
+                const wattsResult = voltage * current;
+                document.getElementById("watts").value = wattsResult.toFixed(2);
+            } else if (!isNaN(voltage) && isNaN(current) && !isNaN(watts)) {
+                // Calculate Current from Voltage and Watts
+                const currentResult = watts / voltage;
+                document.getElementById("current").value = currentResult.toFixed(2);
+            } else if (isNaN(voltage) && !isNaN(current) && !isNaN(watts)) {
+                // Calculate Voltage from Current and Watts
+                const voltageResult = watts / current;
+                document.getElementById("voltage").value = voltageResult.toFixed(2);
+            } else {
+                document.getElementById("ohmsLawResult").innerText = "Please enter valid numbers.";
+            }
+        }
+
+        function clearOhmsLaw() {
+            document.getElementById("voltage").value = "240";
+            document.getElementById("current").value = "";
+            document.getElementById("watts").value = "";
+            document.getElementById("ohmsLawResult").innerText = "";
+        }
+
+
+        function calculateVoltageDrop() {
+            const current = parseFloat(document.getElementById("current2").value);
+            const length = parseFloat(document.getElementById("length").value);
+            const cableSize = parseFloat(document.getElementById("cableSize").value);
+            const voltageInput = parseFloat(document.getElementById("voltageInput").value);
+
+            if (isNaN(current) || isNaN(length) || isNaN(cableSize) || isNaN(voltageInput)) {
+                document.getElementById("voltageDropResult").innerText = "Please enter valid numbers.";
+                document.getElementById("voltageDropPercentageResult").innerText = "";
+                return;
+            }
+
+            const resistancePerMeter = cableSize / 1000; // convert mm² to mm²/m, hence / 1000
+            const resistance = resistancePerMeter * length;
+            const voltageDrop = (2 * length * resistance * current);
+            const voltageAfterDrop = voltageInput - voltageDrop;
+            const voltageDropPercentage = (voltageDrop / voltageInput) * 100;
+
+            document.getElementById("voltageDropResult").innerText = `Voltage Drop = ${voltageDrop.toFixed(2)} V`;
+            document.getElementById("voltageDropPercentageResult").innerText = `Voltage Drop Percentage = ${voltageDropPercentage.toFixed(2)} %`;
+        }
+
+        function toggleColorScheme() {
+            document.body.classList.toggle("light-mode");
+        }
+    </script>
+</body>
+</html>
